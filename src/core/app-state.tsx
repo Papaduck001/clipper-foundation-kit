@@ -35,6 +35,10 @@ interface ClipperActions {
   cancelJob: () => void;
   clearJob: () => void;
   revealClip: (clip: ClipResult) => Promise<void>;
+  openClip: (clip: ClipResult) => Promise<void>;
+  copyClipPath: (clip: ClipResult) => Promise<void>;
+  chooseOutputDirectory: () => Promise<void>;
+  isDesktop: boolean;
   checkEngine: () => Promise<void>;
 }
 
