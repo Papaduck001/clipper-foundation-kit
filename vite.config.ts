@@ -12,4 +12,9 @@ export default defineConfig({
     // nitro/vite builds from this
     server: { entry: "server" },
   },
+  // Desktop packaging (Electron) needs a plain Node server, not the Cloudflare
+  // Workers target the Lovable preview environment defaults to.
+  nitro: {
+    preset: "node-server",
+  },
 });

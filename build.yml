@@ -1,0 +1,59 @@
+name: Build Clipper Installer
+
+# Builds the full merged app (Python engine + React/Electron UI) into one
+# Windows Setup.exe, on GitHub's own Windows machines. No local Windows PC
+# needed. Trigger from the Actions tab ("Run workflow"), or it runs
+# automatically on every push to main.
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install backend Python dependencies
+        working-directory: backend
+        run: pip install -r requirements.txt
+
+      - name: Package backend as a standalone exe (PyInstaller)
+        working-directory: backend
+        run: |
+          pyinstaller --noconfirm --name Clipper-Backend `
+            --collect-all faster_whisper `
+            --collect-all librosa `
+            --add-data "static;static" `
+            --add-data "src;src" `
+            app.py
+
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: npm install
+
+      - name: Build frontend (React + TanStack Start, Node server target)
+        working-directory: frontend
+        run: npm run build
+
+      - name: Build the Electron installer
+        working-directory: frontend
+        run: npx electron-builder --win
+
+      - name: Upload installer as a downloadable artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ClipperSetup
+          path: frontend/release/*.exe
