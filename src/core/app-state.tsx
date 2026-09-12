@@ -12,6 +12,7 @@ import { createContext, useCallback, useContext, useMemo, useRef, useState } fro
 import type { ReactNode } from "react";
 
 import { DEFAULT_CLIP_SETTINGS } from "./clip-settings";
+import { getDesktopApi } from "./desktop-bridge";
 import { getVideoEngine } from "./video-engine";
 import type { ClipResult, ClipSettings, Job, RecentProject, SourceVideo } from "./types";
 
@@ -35,6 +36,10 @@ interface ClipperActions {
   cancelJob: () => void;
   clearJob: () => void;
   revealClip: (clip: ClipResult) => Promise<void>;
+  openClip: (clip: ClipResult) => Promise<void>;
+  copyClipPath: (clip: ClipResult) => Promise<void>;
+  chooseOutputDirectory: () => Promise<void>;
+  isDesktop: boolean;
   checkEngine: () => Promise<void>;
 }
 
@@ -178,6 +183,23 @@ export function ClipperProvider({ children }: { children: ReactNode }) {
     [engine],
   );
 
+  const openClip = useCallback(async (clip: ClipResult) => {
+    if (!clip.filePath) return;
+    await getDesktopApi()?.openFile(clip.filePath);
+  }, []);
+
+  const copyClipPath = useCallback(async (clip: ClipResult) => {
+    if (!clip.filePath) return;
+    const api = getDesktopApi();
+    if (api) await api.copyText(clip.filePath);
+    else await navigator.clipboard?.writeText(clip.filePath);
+  }, []);
+
+  const chooseOutputDirectory = useCallback(async () => {
+    const dir = await getDesktopApi()?.selectOutputFolder();
+    if (dir) setSettings((prev) => ({ ...prev, outputDirectory: dir }));
+  }, []);
+
   const value = useMemo<ClipperContextValue>(
     () => ({
       engineName: engine.name,
@@ -196,6 +218,10 @@ export function ClipperProvider({ children }: { children: ReactNode }) {
       cancelJob,
       clearJob,
       revealClip,
+      openClip,
+      copyClipPath,
+      chooseOutputDirectory,
+      isDesktop: getDesktopApi() !== null,
       checkEngine,
     }),
     [
@@ -215,6 +241,9 @@ export function ClipperProvider({ children }: { children: ReactNode }) {
       cancelJob,
       clearJob,
       revealClip,
+      openClip,
+      copyClipPath,
+      chooseOutputDirectory,
       checkEngine,
     ],
   );

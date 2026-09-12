@@ -26,7 +26,7 @@ export const Route = createFileRoute("/results")({
 });
 
 function ResultsPage() {
-  const { results, revealClip, settings } = useClipper();
+  const { results, revealClip, openClip, copyClipPath, settings } = useClipper();
 
   return (
     <div className="mx-auto max-w-5xl">
@@ -52,7 +52,13 @@ function ResultsPage() {
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {results.map((clip) => (
-            <ClipResultCard key={clip.id} clip={clip} onReveal={revealClip} />
+            <ClipResultCard
+              key={clip.id}
+              clip={clip}
+              onReveal={revealClip}
+              onOpen={openClip}
+              onCopyPath={copyClipPath}
+            />
           ))}
         </div>
       )}
