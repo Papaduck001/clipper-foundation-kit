@@ -182,6 +182,23 @@ export function ClipperProvider({ children }: { children: ReactNode }) {
     [engine],
   );
 
+  const openClip = useCallback(async (clip: ClipResult) => {
+    if (!clip.filePath) return;
+    await getDesktopApi()?.openFile(clip.filePath);
+  }, []);
+
+  const copyClipPath = useCallback(async (clip: ClipResult) => {
+    if (!clip.filePath) return;
+    const api = getDesktopApi();
+    if (api) await api.copyText(clip.filePath);
+    else await navigator.clipboard?.writeText(clip.filePath);
+  }, []);
+
+  const chooseOutputDirectory = useCallback(async () => {
+    const dir = await getDesktopApi()?.selectOutputFolder();
+    if (dir) setSettings((prev) => ({ ...prev, outputDirectory: dir }));
+  }, []);
+
   const value = useMemo<ClipperContextValue>(
     () => ({
       engineName: engine.name,
