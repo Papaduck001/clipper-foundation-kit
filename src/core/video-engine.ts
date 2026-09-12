@@ -14,6 +14,8 @@
  *   2. Return it from `getVideoEngine()` below.
  *   No UI changes are required.
  */
+import { getDesktopApi } from "./desktop-bridge";
+import { electronFfmpegEngine } from "./engines/electron-ffmpeg-engine";
 import type { ClipResult, ClipSettings, SourceVideo, VideoMetadata } from "./types";
 
 export interface EngineProgress {
