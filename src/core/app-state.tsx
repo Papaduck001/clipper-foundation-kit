@@ -12,6 +12,7 @@ import { createContext, useCallback, useContext, useMemo, useRef, useState } fro
 import type { ReactNode } from "react";
 
 import { DEFAULT_CLIP_SETTINGS } from "./clip-settings";
+import { getDesktopApi } from "./desktop-bridge";
 import { getVideoEngine } from "./video-engine";
 import type { ClipResult, ClipSettings, Job, RecentProject, SourceVideo } from "./types";
 
