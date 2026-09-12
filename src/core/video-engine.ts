@@ -71,7 +71,11 @@ export const unavailableVideoEngine: VideoEngine = {
   },
 };
 
-/** Single place where the active engine is chosen. */
+/**
+ * Single place where the active engine is chosen.
+ * Desktop build → real local FFmpeg engine. Browser dev build → unavailable.
+ */
 export function getVideoEngine(): VideoEngine {
+  if (getDesktopApi()) return electronFfmpegEngine;
   return unavailableVideoEngine;
 }
