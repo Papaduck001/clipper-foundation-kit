@@ -240,6 +240,9 @@ export function ClipperProvider({ children }: { children: ReactNode }) {
       cancelJob,
       clearJob,
       revealClip,
+      openClip,
+      copyClipPath,
+      chooseOutputDirectory,
       checkEngine,
     ],
   );
