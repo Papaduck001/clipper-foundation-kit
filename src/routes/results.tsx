@@ -26,7 +26,7 @@ export const Route = createFileRoute("/results")({
 });
 
 function ResultsPage() {
-  const { results, revealClip, settings } = useClipper();
+  const { results, revealClip, openClip, copyClipPath, settings } = useClipper();
 
   return (
     <div className="mx-auto max-w-5xl">
