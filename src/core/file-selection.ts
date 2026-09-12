@@ -16,6 +16,22 @@ export function isVideoFile(file: File): boolean {
   return ACCEPTED_VIDEO_EXTENSIONS.some((extension) => name.endsWith(extension));
 }
 
+/** Desktop file dialog result → SourceVideo (has a real absolute path). */
+export function sourceVideoFromNative(picked: {
+  path: string;
+  name: string;
+  sizeBytes: number;
+}): SourceVideo {
+  return {
+    id: `src_${Math.random().toString(36).slice(2, 10)}`,
+    name: picked.name,
+    path: picked.path,
+    sizeBytes: picked.sizeBytes,
+    mimeType: null,
+    metadata: null,
+  };
+}
+
 export function sourceVideoFromFile(file: File): SourceVideo {
   return {
     id: `src_${Math.random().toString(36).slice(2, 10)}`,
