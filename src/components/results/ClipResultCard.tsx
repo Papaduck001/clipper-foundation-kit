@@ -1,5 +1,5 @@
-/** One generated clip. Fields stay empty until a real engine fills them in. */
-import { ExternalLink, Film } from "lucide-react";
+/** One generated clip on disk, with open / reveal / copy-path actions. */
+import { Copy, ExternalLink, Film, Play } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { formatBytes, formatDuration } from "@/core/format";
@@ -8,9 +8,13 @@ import type { ClipResult } from "@/core/types";
 export function ClipResultCard({
   clip,
   onReveal,
+  onOpen,
+  onCopyPath,
 }: {
   clip: ClipResult;
   onReveal: (clip: ClipResult) => void;
+  onOpen?: (clip: ClipResult) => void;
+  onCopyPath?: (clip: ClipResult) => void;
 }) {
   return (
     <div className="overflow-hidden rounded-lg border border-border bg-card">
@@ -31,16 +35,35 @@ export function ClipResultCard({
           <span>{formatBytes(clip.sizeBytes)}</span>
         </div>
         <p className="tech truncate text-muted-foreground">{clip.filePath ?? "—"}</p>
-        <Button
-          variant="secondary"
-          size="sm"
-          className="w-full"
-          disabled={!clip.filePath}
-          onClick={() => onReveal(clip)}
-        >
-          <ExternalLink className="size-3.5" />
-          Show in folder
-        </Button>
+        <div className="flex gap-2">
+          <Button
+            size="sm"
+            className="flex-1"
+            disabled={!clip.filePath}
+            onClick={() => onOpen?.(clip)}
+          >
+            <Play className="size-3.5" />
+            Open
+          </Button>
+          <Button
+            variant="secondary"
+            size="sm"
+            disabled={!clip.filePath}
+            onClick={() => onReveal(clip)}
+            aria-label="Show in folder"
+          >
+            <ExternalLink className="size-3.5" />
+          </Button>
+          <Button
+            variant="secondary"
+            size="sm"
+            disabled={!clip.filePath}
+            onClick={() => onCopyPath?.(clip)}
+            aria-label="Copy file path"
+          >
+            <Copy className="size-3.5" />
+          </Button>
+        </div>
       </div>
     </div>
   );
